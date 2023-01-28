@@ -15,11 +15,8 @@ const Register = () => {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
   const [confirmPassword, setConfirmPassword] = useState()
-  const [pic, setPic] = useState()
 
   const handleClick = () => setShow(!show)
-
-  const postDetails = pics => {}
 
   const submitHandler = () => {}
 
@@ -68,15 +65,6 @@ const Register = () => {
             </Button>
           </InputRightElement>
         </InputGroup>
-      </FormControl>
-      <FormControl id="pic">
-        <FormLabel>Upload your Picture</FormLabel>
-        <Input
-          type="file"
-          p={1.5}
-          accept="image/*"
-          onChange={e => postDetails(e.target.files[0])}
-        ></Input>
       </FormControl>
       <Button
         colorScheme="pink"
