@@ -7,7 +7,6 @@ const userModel = mongoose.Schema(
     password: { type: String, required: true },
     pic: {
       type: String,
-      required: true,
       default:
         "https://img.icons8.com/external-avatar-andi-nur-abdillah/64/null/external-avatar-avatarar-bussiness-avatar-andi-nur-abdillah-32.png",
     },
