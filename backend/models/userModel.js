@@ -9,7 +9,7 @@ const userModel = mongoose.Schema(
     pic: {
       type: String,
       default:
-        "https://img.icons8.com/external-avatar-andi-nur-abdillah/64/null/external-avatar-avatarar-bussiness-avatar-andi-nur-abdillah-32.png",
+        "https://img.icons8.com/ios-filled/300/null/user-male-circle.png",
     },
   },
   {
