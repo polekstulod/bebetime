@@ -18,6 +18,7 @@ import {
   useDisclosure,
   Input,
   useToast,
+  Spinner,
 } from "@chakra-ui/react"
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons"
 import { ChatState } from "../../context/ChatProvider"
@@ -91,7 +92,10 @@ const SideDrawer = () => {
         },
       }
 
-      const { data } = await axios.post(`/api/chat/`, { userId }, config)
+      const { data } = await axios.post(`/api/chat`, { userId }, config)
+      console.log(data)
+
+      if (!chats.find(chat => chat._id === data._id)) setChats([data, ...chats])
 
       setSelectedChat(data)
       setLoadingChat(false)
@@ -177,10 +181,11 @@ const SideDrawer = () => {
                 <UserListItem
                   key={user._id}
                   user={user}
-                  handleFunction={() => accessChat(user.id)}
+                  handleFunction={() => accessChat(user._id)}
                 />
               ))
             )}
+            {loadingChat && <Spinner ml="auto" d="flex" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
