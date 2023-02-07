@@ -12,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react"
@@ -19,6 +20,7 @@ import { ViewIcon } from "@chakra-ui/icons"
 import { ChatState } from "../../context/ChatProvider"
 import UserBadgeItem from "../UserAvatar/UserBadgeItem"
 import axios from "axios"
+import UserListItem from "../UserAvatar/UserListItem"
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -71,7 +73,88 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
     setGroupChatName("")
   }
 
-  const handleSearch = () => {}
+  const handleSearch = async query => {
+    setSearch(query)
+    if (!query) return
+
+    try {
+      setLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+
+      const { data } = await axios.get(`/api/user?search=${query}`, config)
+      setLoading(false)
+      setSearchResult(data)
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: e.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      setLoading(false)
+    }
+  }
+
+  const handleAddUser = async user => {
+    if (selectedChat.users.find(u => u._id === user._id)) {
+      toast({
+        title: "Error",
+        description: "User already in group",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+
+    if (selectedChat.groupAdmin._id !== user._id) {
+      toast({
+        title: "Error",
+        description: "You are not the group admin",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+
+      const { data } = await axios.put(
+        "/api/chat/groupadd",
+        {
+          chatId: selectedChat._id,
+          userId: user._id,
+        },
+        config
+      )
+
+      setSelectedChat(data)
+      setFetchAgain(!fetchAgain)
+      setLoading(false)
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: e.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -128,6 +211,17 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
                 onChange={e => handleSearch(e.target.value)}
               />
             </FormControl>
+            {loading ? (
+              <Spinner size="lg" />
+            ) : (
+              searchResult.map(u => (
+                <UserListItem
+                  key={u._id}
+                  user={u}
+                  handleFunction={() => handleAddUser(u)}
+                />
+              ))
+            )}
           </ModalBody>
 
           <ModalFooter>
