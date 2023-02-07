@@ -34,7 +34,49 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
 
   const { selectedChat, setSelectedChat, user } = ChatState()
 
-  const handleRemove = () => {}
+  const handleRemove = async user => {
+    if (selectedChat.groupAdmin._id !== user._id && user._id !== user._id) {
+      toast({
+        title: "Error",
+        description: "You are not the admin of this group",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      return
+    }
+
+    try {
+      setLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+
+      const { data } = await axios.put(
+        "/api/chat/groupremove",
+        {
+          chatId: selectedChat._id,
+          userId: user._id,
+        },
+        config
+      )
+
+      user._id === user._id ? setSelectedChat() : selectedChat(data)
+      setFetchAgain(!fetchAgain)
+      setLoading(false)
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: e.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+      setLoading(false)
+    }
+  }
 
   const handleRename = async () => {
     if (!groupChatName) return
