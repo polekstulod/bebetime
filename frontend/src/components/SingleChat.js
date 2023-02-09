@@ -90,12 +90,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageReceived.chat._id
       ) {
-        // give notification
+        if (!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification])
+          setFetchAgain(!fetchAgain)
+        }
       } else {
         setMessages([...messages, newMessageReceived])
       }
     })
   })
+
   const sendMessage = async event => {
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id)
