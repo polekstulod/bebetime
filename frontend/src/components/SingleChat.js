@@ -16,11 +16,16 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal"
 import axios from "axios"
 import "./styles.css"
 import ScrollableChat from "./ScrollableChat"
+import { io } from "socket.io-client"
+
+const ENDPOINT = "http://localhost:4000"
+let socket, selectedChatCompare
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [newMessage, setNewMessages] = useState()
+  const [socketConnected, setSocketConnected] = useState(false)
 
   const toast = useToast()
   const { user, selectedChat, setSelectedChat } = ChatState()
@@ -41,6 +46,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       )
       setMessages(data)
       setLoading(false)
+      socket.emit("join chat", selectedChat._id)
     } catch (e) {
       toast({
         title: "Error",
@@ -86,6 +92,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       }
     }
   }
+
+  useEffect(() => {
+    socket = io(ENDPOINT)
+    socket.emit("setup", user)
+    socket.on("connection", () => setSocketConnected(true))
+  }, [])
 
   const typingHandler = e => {
     setNewMessages(e.target.value)
