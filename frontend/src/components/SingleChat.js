@@ -40,7 +40,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }
 
   const toast = useToast()
-  const { user, selectedChat, setSelectedChat } = ChatState()
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState()
 
   const fetchMessages = async () => {
     if (!selectedChat) return
