@@ -63,4 +63,6 @@ io.on("connection", socket => {
       socket.in(user._id).emit("message received", newMessageReceived)
     })
   })
+
+  socket.off("setup", userData => socket.leave(userData._id))
 })
